@@ -4,7 +4,7 @@ Internal tool for improving WooCommerce product titles and descriptions.
 
 Upload a WooCommerce product export, choose a product category, run enrichment, and download a CSV that can be imported back into WooCommerce.
 
-For the non-technical workflow, start here: [ENRICHMENT_WORKFLOW.md](ENRICHMENT_WORKFLOW.md)
+For the enrichment workflow, see: [ENRICHMENT_WORKFLOW.md](ENRICHMENT_WORKFLOW.md)
 
 For server setup, use: [DEPLOYMENT.md](DEPLOYMENT.md)
 
@@ -64,7 +64,7 @@ docker compose down
 
 ## Server Setup
 
-Use this for the boss-friendly link.
+Use this when deploying the app to a shared server.
 
 Requirements on the server:
 
@@ -160,7 +160,7 @@ Options:
 
 ## Deployment
 
-For a simple link your boss can open, deploy this repo to a Linux server with Docker Engine and Docker Compose.
+For a shared browser link, deploy this repo to a Linux server with Docker Engine and Docker Compose.
 
 Server deployment guide:
 
