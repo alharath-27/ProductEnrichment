@@ -532,9 +532,125 @@ def _hard_validate_against_attrs(attrs: Dict[str, Any], text: str) -> List[str]:
     return deduped
 
 
+def _attr_value(attrs: Dict[str, Any], *names: str) -> str:
+    lookup = {str(k).strip().lower(): str(v).strip() for k, v in (attrs or {}).items()}
+    for name in names:
+        value = lookup.get(str(name).strip().lower(), "")
+        if value and value.lower() != "nan":
+            return value
+    return ""
+
+
+def _format_packaging(value: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    m = re.match(r"^\s*(\d+)\s*/\s*([A-Za-z]+)\s*$", text)
+    if m:
+        return f"{m.group(1)}/{m.group(2).capitalize()}"
+    return text
+
+
+def _clean_title_part(value: str) -> str:
+    text = normalize_copy_style(normalize_dimension_label_order(normalize_wp_units(value or "")), kind="title")
+    return text.strip(" ,-–")
+
+
+def _join_title_parts(parts: List[str]) -> str:
+    cleaned = [_clean_title_part(p) for p in parts if _clean_title_part(p)]
+    return " – ".join(cleaned)
+
+
+def _deterministic_needles_title(product: Dict[str, Any]) -> str:
+    """Build consistent Needles & Scalpels titles from attributes."""
+    attrs = product.get("attributes") or {}
+    product_type = _attr_value(attrs, "Needles & Scalpels Type")
+    packaging = _format_packaging(_attr_value(attrs, "Packaging"))
+    material = _attr_value(attrs, "Material")
+    color = _attr_value(attrs, "Color")
+    lead = f"{packaging}, by Chamfr" if packaging else "by Chamfr"
+
+    product_type_l = product_type.lower()
+    if "scalpel" in product_type_l:
+        blade_style = _attr_value(attrs, "Blade Style")
+        blade_material = _attr_value(attrs, "Blade Material")
+        blade = f"{blade_style} Blade" if blade_style else ""
+        materials = ", ".join(
+            p for p in [material, f"{blade_material} Blade" if blade_material else ""] if p
+        )
+        return _join_title_parts([
+            "Safety Scalpel" if "safety" in (product.get("Name", "") or "").lower() else "Scalpel",
+            blade,
+            color,
+            materials,
+            lead,
+        ])
+
+    if "suture" in product_type_l:
+        diameter = _attr_value(attrs, "Diameter (mm)")
+        length = _attr_value(attrs, "Length (mm)")
+        point_type = _attr_value(attrs, "Point Type")
+        curvature = _attr_value(attrs, "Curvature")
+        hole = _attr_value(attrs, "Thread Hole Diameter (mm)")
+        coating = _attr_value(attrs, "Coating")
+        size = ", ".join(
+            p
+            for p in [
+                f"{diameter} mm Diameter" if diameter else "",
+                f"{length} mm Length" if length else "",
+            ]
+            if p
+        )
+        geometry = ", ".join(
+            p
+            for p in [
+                point_type,
+                f"{curvature} Curvature" if curvature else "",
+                f"{hole} mm Hole" if hole else "",
+            ]
+            if p
+        )
+        material_section = ", ".join(
+            p for p in [material, f"{coating} Coating" if coating else ""] if p
+        )
+        return _join_title_parts(["Suture Needle", size, geometry, material_section, lead])
+
+    gauge = _attr_value(attrs, "Gauge")
+    wall = _attr_value(attrs, "Wall Thickness")
+    cannula_length = _attr_value(attrs, "Cannula Length")
+    subtype = product_type or "Needle"
+    size = ", ".join(
+        p
+        for p in [
+            f"{gauge} Gauge" if gauge else "",
+            wall,
+            f"{cannula_length} Length" if cannula_length else "",
+        ]
+        if p
+    )
+    details = ", ".join(p for p in [material, color] if p)
+    return _join_title_parts([subtype, size, details, lead])
+
+
+def deterministic_title_for_category(product: Dict[str, Any], category: str) -> Optional[str]:
+    if category == "needles":
+        title = _deterministic_needles_title(product)
+        return title if title and "by Chamfr" in title else None
+    return None
+
+
 def call_title_llm(product, prompts, category: str = ""):
     logger.info("LLM: Formatting title for SKU: %s", product["SKU"])
     _require_api_key()
+    deterministic_title = deterministic_title_for_category(product, category)
+    if deterministic_title:
+        issues = _hard_validate_against_attrs(product.get("attributes") or {}, deterministic_title)
+        return deterministic_title, {
+            "passed": not issues,
+            "rewritten": False,
+            "issues": issues,
+        }
+
     source_block = _build_source_fields_block(product)
     derived_block = _build_derived_features_block(product)
     conflict_block = _build_conflict_warning_block(product)
