@@ -4,6 +4,10 @@ Internal tool for improving WooCommerce product titles and descriptions.
 
 Upload a WooCommerce product export, choose a product category, run enrichment, and download a CSV that can be imported back into WooCommerce.
 
+For the non-technical workflow, start here: [ENRICHMENT_WORKFLOW.md](ENRICHMENT_WORKFLOW.md)
+
+For server setup, use: [DEPLOYMENT.md](DEPLOYMENT.md)
+
 ## What This Does
 
 - Takes a WooCommerce CSV export.

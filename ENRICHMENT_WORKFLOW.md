@@ -1,44 +1,38 @@
 # Product Enrichment Workflow
 
-This document explains what happens when we enrich products from a WooCommerce export.
+This tool takes a WooCommerce product export and returns the same file with improved product titles and descriptions.
 
-The goal is simple:
+The goal is to make product pages cleaner and more consistent without changing inventory, pricing, images, categories, or attributes.
 
-```text
-WooCommerce CSV export -> improved product titles and descriptions -> import-ready WooCommerce CSV
-```
+## Input
 
----
+The input is a standard WooCommerce CSV export.
 
-## 1. Input
-
-We start with a standard WooCommerce product export CSV.
-
-Important fields include:
+The main fields used are:
 
 - `SKU`
 - `Name`
 - `Short description`
 - `Description`
-- WooCommerce attribute columns, such as `Attribute 1 name`, `Attribute 1 value(s)`, etc.
+- WooCommerce product attributes
 
-The attributes are the most important part because they contain the actual product specifications.
+Attributes are the source of truth for product specs.
 
-Examples:
+Example attributes:
 
 ```text
-Gauge = 18
-Wall Thickness = Thin Wall
-Cannula Length = 7.0 cm
-Material = Polycarbonate
-Packaging = 25/bag
+Gauge: 18
+Wall Thickness: Thin Wall
+Cannula Length: 7.0 cm
+Material: Polycarbonate
+Packaging: 25/bag
 ```
 
----
+If the old product name conflicts with the attributes, the attributes win.
 
-## 2. Category Selection
+## Category Selection
 
-The user selects a product category in the app.
+The user selects a category before enrichment.
 
 Examples:
 
@@ -48,177 +42,87 @@ Examples:
 - Balloons
 - Polymer Tubing
 
-Each category has its own YAML prompt file under `backend/prompts/`.
+Each category has its own title and description rules. These live in `backend/prompts/`.
 
-Those YAML files define:
+This is important because different product types need different copy structures.
 
-- the expected title template
-- title rules
-- description rules
-- category-specific writing style
+## What Happens During Enrichment
 
-This matters because a catheter title should not be structured the same way as a scalpel title.
+For each product row:
 
----
+1. The app reads the product name, description, SKU, and attributes.
+2. It builds or generates a category-specific title.
+3. It generates a product description using the category rules.
+4. It checks that specific specs come from the attributes.
+5. It writes the enriched title and description back into the CSV.
 
-## 3. Attribute Extraction
+## Titles
 
-For each product row, the backend reads all WooCommerce attribute pairs:
+Titles should be consistent within a category.
 
-```text
-Attribute 1 name       -> Attribute 1 value(s)
-Attribute 2 name       -> Attribute 2 value(s)
-...
-```
-
-It converts them into a structured dictionary.
+For Needles & Scalpels, titles are built from attributes in a fixed format.
 
 Example:
-
-```json
-{
-  "Needles & Scalpels Type": "Percutaneous Access Needle",
-  "Gauge": "18",
-  "Wall Thickness": "Thin Wall",
-  "Cannula Length": "7.0 cm",
-  "Material": "Polycarbonate",
-  "Color": "Pink",
-  "Packaging": "25/bag"
-}
-```
-
-These attributes are treated as the source of truth.
-
-If the original product name says one thing but the attributes say another, the enrichment process trusts the attributes.
-
----
-
-## 4. Title Enrichment
-
-The title is built to be consistent across products in the same category.
-
-For some categories, the AI uses the category's YAML title template and then validates the output.
-
-For Needles & Scalpels, titles are built deterministically from attributes to keep the structure consistent.
-
-Example output:
 
 ```text
 Percutaneous Access Needle, 18 Gauge, Thin Wall, 7.0 cm Length, Polycarbonate, Pink, 25/Bag, by Chamfr
 ```
 
-The title process focuses on:
+The title should be predictable:
 
-- consistent structure
-- correct product type
-- exact dimensions and specs
-- no invented values
-- same separator style
-- same ending pattern
+- same structure
+- same separators
+- same ending
+- no invented specs
 
-Descriptions are allowed to vary, but titles should stay template-driven.
+## Descriptions
 
----
+Descriptions are generated with AI from the category prompt.
 
-## 5. Description Enrichment
+They use:
 
-Descriptions are generated with AI using the category-specific YAML prompt.
+- the product attributes
+- the original product text as context
+- the new title
+- the selected category rules
 
-The description uses:
+Descriptions should be accurate, but they do not need to be identical in structure. Some variation is intentional so the catalog does not read like duplicated copy.
 
-- product attributes
-- original name and description for context
-- the newly generated title
-- category writing rules
+## QA Checks
 
-The descriptions are intentionally less rigid than titles. They should sound tailored to each product instead of repeating the exact same sentence pattern.
+The app checks for common problems:
 
-The AI is instructed to:
-
-- describe the product clearly
-- include important technical specs
-- avoid unsupported claims
-- avoid regulatory claims unless present in the source data
-- vary sentence structure between products
-
----
-
-## 6. QA and Validation
-
-After title and description generation, the system checks the output.
-
-The key rule is:
-
-```text
-Specific specs must come from the product attributes.
-```
-
-The validation checks for things like:
-
-- invented dimensions
-- rounded numbers
-- unsupported material names
+- invented specs
+- changed numbers
+- unsupported materials
 - cross-product mixing
-- specs that do not exist in the attribute data
+- claims not supported by the product data
 
-Example:
+Example: if an attribute says `7.0 cm`, the output should not rewrite it as `7.5 cm`.
 
-If the attributes say:
+## Output
 
-```text
-Cannula Length = 7.0 cm
-```
+The output CSV keeps the original WooCommerce structure.
 
-The output should not change that to:
+Only these copy fields are updated:
 
-```text
-7 cm
-```
+- `Name` or `Title`
+- `Description`
 
-or:
+Everything else is preserved.
 
-```text
-7.5 cm
-```
+That makes the file easier to import back into WooCommerce.
 
-The system tries to preserve exact attribute values.
+## Recommended Use
 
----
-
-## 7. Output
-
-The final output is a WooCommerce-ready CSV.
-
-It keeps the original input file structure and updates only the enriched copy fields:
-
-- `Name` or `Title` becomes the enriched title
-- `Description` becomes the enriched description
-- all other columns are preserved
-
-This makes the output easier to import back into WooCommerce.
-
----
-
-## 8. Human Review
-
-The recommended workflow is:
-
-1. Run 1 product first as a test.
+1. Run 1 product first.
 2. Review the title and description.
-3. Confirm the selected category is correct.
+3. Confirm the right category was selected.
 4. Run a small batch.
-5. Spot-check the output.
+5. Spot-check the result.
 6. Run the full batch.
 7. Import the enriched CSV into WooCommerce.
 
----
-
 ## Summary
 
-The enrichment workflow improves product copy while keeping product specs grounded in WooCommerce attributes.
-
-Titles are designed to be consistent and template-based.
-
-Descriptions are designed to be richer and more varied.
-
-The final output stays import-ready for WooCommerce.
+The system uses WooCommerce attributes to keep specs grounded, category templates to keep titles consistent, and AI prompts to improve product descriptions.
