@@ -1,0 +1,113 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this catheter component product title.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Subtype/Keyword] Catheter [Shaft or Tubing] – [Fr size OR (ID/OD)] – [Length] – [Material/Reinforcement], [Packaging/Sterility], by Chamfr
+
+
+    Rules:
+    - Always start with a descriptive Subtype/Keyword (e.g., Balloon, Multi-Lumen, Dual-Lumen, Guiding, Introducer, Microcatheter, Rapid Exchange).
+    - Always include the word "Catheter" plus either "Shaft" or "Tubing" in the main subtype phrase.
+    - Do NOT mention any applications or use-cases in the title (no clinical or manufacturing context).
+    - Dimensions must prioritize either French size or OD/ID (in inches) depending on what is provided.
+    - If balloon dimensions are present, format as "D × L mm Balloon" (e.g., "3.0 × 20 mm Balloon") immediately after subtype when applicable.
+    - Dimension labeling MUST be explicit and placed AFTER the number so it is unambiguous what the number refers to.
+      - Examples: `46" Length`, `0.045" ID`, `0.060" OD`, `7 Fr`.
+      - If multiple dimensions are present, separate with commas: `0.045" ID, 0.060" OD` (do NOT use unlabeled numbers).
+    - Always include overall catheter length as `X cm Length` when provided in centimeters (keep the label AFTER the number).
+      - If length is provided in inches, use `X" Length`.
+    - Preserve exact numeric values with their units (Fr, mm, cm, ″) and do not round.
+    - Include materials and reinforcement when available (e.g., "Pebax 72D", "PTFE Liner", "Stainless Steel Braid", "Hydrophilic-Coated Distal Section").
+    - If lumen count or special features (multi-lumen, dual-lumen, radiopaque stripe, deflectable tip) are present, incorporate them after dimensions or material where it reads clearly.
+    - Packaging/sterility should be formatted as "[Sterile|Non-Sterile], Quantity #/[bag|unit|order]" when available.
+    - Always end the title string with "by Chamfr".
+    - Do not invent values; only use provided attributes.
+    - Do not mention compliance, certifications, regulatory status, or standards anywhere in the title.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in catheter shafts and catheter tubing specifications. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this catheter component product.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+
+    GENERATED TITLE (do NOT repeat these specs):
+    {title}
+
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present:
+       - Material (e.g., "Extruded from Pebax 72D...", "Constructed with a PTFE liner...")
+       - Durometer/hardness (e.g., "...with 55D Shore hardness..." or Pebax durometer range)
+       - Reinforcement (e.g., "...with stainless steel braid reinforcement...", "coil-reinforced shaft...")
+       - Coatings (e.g., "hydrophilic-coated distal section", "lubricious inner liner...")
+       - Radiopaque features (e.g., "radiopaque stripe", "radiopaque marker band...")
+       - Lumen configuration (e.g., "dual-lumen", "four-lumen configuration") if not already in the title
+       - Any other attribute NOT already in the title
+
+    1b. CROSS-REFERENCE ORIGINAL NAME:
+       - Carefully compare the Original Name against the provided Attributes.
+       - Extract and include any relevant technical details from the Original Name that are NOT captured in the Attributes (e.g., specific catheter types like "PTCA", "guiding", "introducer", "microcatheter"; design features like "tapered tip", "soft tip", "rapid exchange"; or application hints like "neuro", "peripheral", "coronary").
+       - Incorporate these details naturally into the description where they add value.
+
+
+    2. TECHNICAL TONE:
+       - Use engineering terminology (durometer, radiopacity, lubricity, torque response, kink resistance, trackability).
+       - Reference technical applications such as balloon catheter shafts, multi-lumen assemblies, guidewire-compatible shafts, introducer sheaths.
+       - Tie material and reinforcement choices to performance traits (e.g., torque control, pushability, kink resistance, fluoroscopic visibility).
+       - Include specific attributes in the descriptions, not just generic statements. 
+
+
+    3. FORMAT:
+       - Exactly 4 sentences.
+       - First sentence: Subtype and material plus any key reinforcement or liner properties.
+       - Second sentence: Additional attributes not present in the title (additives, durometer, coatings, lumen configuration, radiopaque details, wall structure).
+       - Third sentence: Application-relevant performance characteristics (e.g., trackability in tortuous anatomy, torque response, kink resistance, smooth device delivery).
+       - Fourth sentence: Manufacturing/R&D benefits and typical use contexts (e.g., OEM catheter development, rapid prototyping, design evaluation), without making clinical claims.
+       - Target 70-90 words total.
+       - Diversify the beginning sentences so that not all descriptions start the same way. 
+
+
+    4. RESTRICTIONS:
+       - Do NOT repeat Fr size, OD, ID, overall length, or balloon dimensions (already in the title).
+       - Do NOT invent certifications, compliance status, or regulatory claims of any kind.
+       - Do NOT use marketing fluff; keep it technical and factual.
+       - Do NOT mention competitor brands or product lines.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    
+    REMINDER: Cross-reference the Original Name above with the Attributes. Include any relevant details from the Original Name that are missing from the Attributes (e.g., catheter subtypes, design features, application contexts).

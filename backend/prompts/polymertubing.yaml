@@ -1,0 +1,89 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this polymer tubing product title.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+    Title TEMPLATE (comma-separated segments):
+    [Material Grade] Tubing, [Tubing Type], [ID segment], [OD segment], [Length segment], [Quantity segment], by Chamfr
+
+    Example shape (values must come from attributes only):
+    Pebax 35D Tubing, Single Lumen, 0.016" ID, 0.036" OD, 20" Length, Quantity 5/Bag, by Chamfr
+
+    Rules:
+    - Lead with Material Grade when available (use the exact "Material Grade" attribute string if present; otherwise Material + Grade fields without inventing).
+    - The word "Tubing" appears once in the lead segment ("[Grade] Tubing"). In the [Tubing Type] segment, do NOT add a second "Tubing" (e.g. use "Single Lumen", not "Single Lumen Tubing").
+    - Always include Tubing Type from attributes (lumen / product type).
+    - Dimensions order must be: ID first, then OD, then Length.
+    - Each dimension segment must include its label: use the pattern 0.016" ID (numeric literal + inch mark + label). Use ASCII " for inches unless the source attribute uses ″ — never round or reformat decimals.
+    - Quantity: when packaging is provided, use "Quantity <packaging>" where <packaging> is the exact Packaging attribute text (e.g. 5/Bag, 3/Bag).
+    - Always end with "by Chamfr".
+    - Do not include applications or use-cases in the title.
+    - Do not invent values; only use provided attributes and SKU/Name for disambiguation when attributes are silent.
+    - Only mention FDA, regulatory, ISO, CE, compliance, certification, or approval status if present in the attributes or old_name.
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in polymer tubing specifications. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this Medical Polymer Tubing product.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+    GENERATED TITLE (do NOT repeat ID, OD, Length, or Quantity strings from the title):
+    {title}
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present (use exact numeric literals from attributes for any numbers):
+       - Material / grade (e.g. wording grounded in Material + Material Grade attributes)
+       - Durometer/hardness only when an explicit durometer/hardness attribute is present
+       - Additives only when explicitly listed (e.g. BaSO4 percentage only if in attributes)
+       - Color or finish only when explicitly listed
+       - Wall thickness, French size, or other secondary dimensions when present (never substitute or round values)
+       - Any other attribute NOT already repeated from the title
+
+    2. TECHNICAL TONE:
+       - Use engineering terminology only when grounded in attributes or source fields
+       - Do not add unsupported claims about lubricity, flex modulus, kink resistance, tensile strength, opacity, UV stability, smoothness, or tolerances
+       - Reference applications only at a high level unless attributes or source fields support a specific use
+
+    3. FORMAT:
+       - Exactly 4 sentences
+       - First sentence: Material and key technical properties (no ID/OD/length/qty)
+       - Second sentence: Secondary specs from attributes (wall, French, additives, color, durometer) — exact literals only
+       - Third sentence: Application context at a high level (non-specific unless supported)
+       - Fourth sentence: Supply / R&D or manufacturing-oriented closing (may reference packaging only using attribute wording)
+       - Target 70-90 words total
+       - Diversify openings across SKUs so that not every description starts the same way
+
+    4. RESTRICTIONS:
+       - Do NOT repeat ID, OD, Length, or Quantity from the title
+       - Do NOT invent certifications or compliance claims
+       - Do NOT invent color, finish, additive, durometer, tolerance, surface, or performance properties
+       - Do NOT claim compatibility with guidewires, balloon shafts, catheter tracking, or other specific applications unless supported by attributes or source fields
+       - Do NOT use marketing fluff — keep it technical and factual
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}

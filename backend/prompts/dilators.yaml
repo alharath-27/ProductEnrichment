@@ -1,0 +1,98 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical dilator/introducer/sheath component product title.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Material] [Component Type], [Size Fr × Length cm], [Feature/Coating/Valve], [Packaging/Sterility], by Chamfr
+
+
+    Rules:
+    - Always start with Material followed by Component Type, e.g., "PTFE Introducer Sheath", "Polyurethane Dilator & Sheath Set", "Silicone Large Bore Introducer".
+    - Component Type should reflect the product class: Dilator, Introducer Sheath, Tear-Away Introducer, Micropuncture Introducer Set, Large Bore Introducer, etc.
+    - Always include French size and length when available in the format "[Fr]Fr × [Length] cm".
+    - Add key functional features that are attributes of the component (e.g., Hydrophilic Coating, Thin Wall, Hemostatic Valve, Tuohy-Borst Valve, Peel-Away Sheath, Integrated Valve).
+    - Preserve exact numeric values and units (Fr, cm) with no rounding or unit changes.
+    - Include packaging and sterility when available, formatted as "Sterile [Pack/Unit]" or "Non-Sterile, Pack of #", or similar.
+    - Do NOT mention applications or use-cases in the title (no "for radial access", "for cardiac procedures", etc.).
+    - Do NOT mention compliance, certifications, or standards (e.g., ISO 10993, USP Class VI, FDA 510(k)) anywhere in the title, even if present in the attributes.
+    - Do not invent materials, sizes, coatings, or features; only use what appears in the attributes or original name.
+    - Always end the title string with "by Chamfr".
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in medical dilators, introducers, and sheaths. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this medical dilator/introducer/sheath component product.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+
+    GENERATED TITLE (do NOT repeat these specs):
+    {title}
+
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present:
+       - Material and construction (e.g., "Fabricated from PTFE...", "Polyurethane thin-wall sheath...", "Silicone large bore introducer...").
+       - Component type and configuration (e.g., introducer sheath, dilator and sheath set, tear-away introducer, micropuncture introducer set).
+       - Valve or sealing technology (e.g., hemostatic valve, Tuohy-Borst valve, integrated valve, peel-away sheath design).
+       - Coatings and surface treatments (e.g., hydrophilic coating for reduced insertion friction, lubricious inner lumen).
+       - Any structural or design features not already stated in the title (e.g., thin-wall design, radiopaque construction, micropuncture needle compatibility).
+       - Sterility, packaging, and single-use vs reusable status if present.
+
+
+    2. TECHNICAL TONE:
+       - Use engineering terminology and procedural context (e.g., access profile, insertion friction, trackability, kink resistance, flow path, sheath wall profile).
+       - Connect material and design choices to performance traits such as reduced friction, controlled hemostasis, insertion control, and device exchange efficiency.
+       - Reference applications explicitly here (e.g., radial access, venous access, peripheral procedures, structural heart access) when provided in the attributes or original name.
+       - Keep language precise and factual, avoiding vague marketing phrasing. 
+
+
+    3. FORMAT:
+       - Exactly 4 sentences.
+       - First sentence: Material and component type, plus any primary coating or valve feature (no dimensions repeated).
+       - Second sentence: Additional construction details, coating specifics, wall characteristics, radiopacity, or set configuration not already in the title.
+       - Third sentence: Application-oriented performance characteristics and procedural context (e.g., radial access, cardiac catheterization, peripheral or venous access) based on provided data only.
+       - Fourth sentence: Manufacturing/R&D and packaging details, including sterility and how the component fits into device development or procedural prototyping, without clinical outcome claims.
+       - Target 70–90 words total.
+       - Diversify the opening phrasing so that not all descriptions start the same way.
+
+
+    4. RESTRICTIONS:
+       - Do NOT repeat French size or length values from the title (Fr and cm specs should not be duplicated).
+       - Do NOT invent or imply compliance, regulatory, or certification status (e.g., ISO, USP, FDA) even if similar products typically have them; only mention if explicitly present in attributes or old name.
+       - Do NOT use marketing fluff ("best-in-class", "revolutionary"); maintain a technical, engineering-focused tone.
+       - Do NOT mention competitor brand names in the description.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}

@@ -1,0 +1,145 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical wire product title.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Material/Alloy] [Wire Type/Form], [AWG if present] ([OD in] OD, [OD mm] OD), [Length] Length, Quantity [Packaging], by [Brand/Supplier]
+
+
+    Core Benchmarking Rules (Medical Wires):
+    - Lead with material + wire type.
+      - Examples: "Nitinol Wire", "MP35N Multifilar Cable", "Platinum-Iridium Fine Wire", "Stainless Steel K-Wire (316LVM)".
+      - The first phrase should clearly identify both alloy/material and wire type/form.
+    - Include dimensions in the exact template style.
+      - If OD is available in inches and mm, format as: `AWG XX (0.005" OD, 0.127 mm OD)` (AWG only if present in data).
+      - If only one OD unit is available, include only that unit (do not convert).
+      - If the product is a cable/multifilar construction and strand/AWG are present, include them (e.g., `7×40 AWG`).
+      - If the product is not an OD-based wire (e.g., K-wires/cut lengths), adapt the bracketed size block to match the provided dimensions without inventing conversions.
+    - Add form/features.
+      - Include construction/form qualifiers inside the Wire Type/Form when present (e.g., Ultra-Fine Wire, Fine Wire, Bare Single Strand, Multifilar Cable, Twisted Pair, Insulated).
+      - Keep the title focused on specification/packaging; do not add a "for [Application]" phrase unless it is explicitly required by the data AND you can still keep the title concise.
+    - Note compliance.
+      - Include standards/compliance like ASTM F2063 (Nitinol), ISO 10993, USP Class VI, implant grade when explicitly provided.
+    - Mention packaging/sterility when available.
+      - Spool, coil, cut length, straightened & cut, sterile/non-sterile, 4 oz spool, bulk coils.
+    - Include brand/source.
+      - End with `by [Brand/Supplier]`.
+      - Use the supplier/brand only when it is explicitly present in Attributes or the input CSV fields; otherwise default to `by Chamfr`.
+
+
+    Formatting Rules (Title String):
+    - Follow this structure when data is available:
+      - [Material/Alloy] [Wire Type/Form], [AWG if present] ([OD in] OD, [OD mm] OD), [Length] Length, Quantity [Packaging], by [Brand/Supplier]
+    - Material/Alloy:
+      - Use the specific alloy or combination (e.g., "Nitinol", "MP35N", "316LVM Stainless Steel", "Platinum-Iridium", "Constantan").
+    - Wire Type/Form:
+      - Use a precise type term such as "Wire", "Fine Wire", "Multifilar Cable", "Thermocouple Wire", "K-Wire", "Temporary Pacing Wire", "Orthopedic Stainless Steel Wire".
+      - Include construction indicators like "Multifilar", "Twisted Pair", "Insulated" when present.
+    - Size:
+      - Prefer OD-based formatting when OD is present:
+        - `AWG XX (0.005" OD, 0.127 mm OD)` (AWG only if present; do not convert).
+      - If only inches OR only mm is present, show only what you have.
+      - Never compute mm from inches or inches from mm; only display given values.
+    - Length:
+      - Use the provided length value + unit (e.g., `200 ft Length`, `250 ft Length`, `10 m Length`) without conversions.
+    - Quantity / Packaging:
+      - Use `Quantity 1 spool/bag` style when packaging is given.
+      - If packaging is not provided, omit the Quantity segment rather than inventing it.
+    - Features / Compliance:
+      - Add 1–2 key features such as "Straight Annealed", "Light Oxide", "Bonded Multifilar®", "PTFE Insulated", "Polyimide Insulated".
+      - Include compliance when explicitly given: "ASTM F2063", "ISO 10993", "USP Class VI", "implant grade".
+    - Brand/Supplier:
+      - Use the explicit brand/supplier when present; otherwise default to Chamfr.
+    - Do not invent values.
+      - Only use dimensions, features, compliance, and applications that are present in the attributes or original name.
+    - Regulatory language:
+      - Only mention regulatory/compliance terms like ASTM, ISO, USP, or "implant grade" when explicitly present.
+    - Tone & SEO:
+      - Avoid vague marketing adjectives ("premium", "best-in-class", "revolutionary").
+      - Use technical, descriptive phrases aligned with the examples (e.g., "Multifilar Cable", "Thermocouple Wire", "Temporary Pacing Wire").
+    - End the title string with `by [Brand/Supplier]`.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in medical wire and cable specifications. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this Medical Wire / Cable product.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+
+    GENERATED TITLE (do NOT repeat these specs):
+    {title}
+
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present:
+       - Material/alloy (e.g., "Nitinol", "MP35N", "316LVM stainless steel", "Platinum-Iridium", "Constantan").
+       - Wire type/form (single strand, multifilar cable, twisted pair, thermocouple wire, fine wire, K-wire, pacing wire).
+       - Dimensions in a readable form (diameter in inch + mm or AWG; strand count for cables; length or spool size).
+       - Form/condition (straight annealed, light oxide, full-hard, stranded, twisted, insulated, bonded multifilar®, straightened & cut).
+       - Insulation/coating (PTFE, polyimide, other polymer coatings) when present.
+       - Application context (guidewire cores, pacing leads, orthopedic fixation, neurostimulation leads, implantable electrodes, thermocouples) when supported by the data.
+       - Compliance/standards (ASTM F2063, ISO 10993, USP Class VI, implant grade) when explicitly present.
+       - Packaging and sterility status (spool, coil, cut length, bulk coils, sterile or non-sterile).
+
+
+    2. TECHNICAL TONE:
+       - Treat the product as a medical/OEM wire component and use engineering terminology relevant to mechanical and electrical performance (fatigue strength, superelasticity, conductivity, corrosion resistance, biocompatibility).
+       - Highlight key properties typical for the material and application when supported by the data or standards (e.g., superelastic Nitinol, high fatigue strength MP35N, high conductivity Platinum-Iridium).
+       - Clearly connect material and construction choices (multifilar, twisted pair, insulated) to performance in the stated applications (e.g., neurostimulation leads, ablation catheters, orthopedic fixation).
+       - Keep all language precise and factual; avoid generic marketing claims.
+
+
+    3. FORMAT:
+       - 4–5 sentences total.
+       - First sentence: Identify the material/alloy and wire type, and state the primary medical/OEM application space (e.g., catheter guidewire cores, implantable leads, orthopedic fixation).
+       - Second sentence: Describe size and construction (diameter/AWG, strand pattern, condition, insulation) using qualitative phrasing, without mechanically repeating the exact title string.
+       - Third sentence: Explain key mechanical/electrical traits (e.g., superelasticity, fatigue strength, conductivity, corrosion resistance, biocompatibility), tying them to material, standards, or construction.
+       - Fourth sentence: Describe packaging/length format and sterility status (spool, coil, cut lengths, sterile/non-sterile) and how that supports manufacturing or R&D workflows.
+       - Optional fifth sentence: Briefly summarize specific target applications or device types when they are explicitly present (e.g., "ideal for implantable neurostimulation leads and chronic pacing systems").
+       - Target 80–110 words total.
+       - Vary sentence openings across products so that not all descriptions start with the same phrase (e.g., alternate between "This Nitinol wire…", "Engineered as an MP35N multifilar cable…", "Designed for implantable electrodes…").
+
+
+    4. RESTRICTIONS:
+       - Do NOT contradict the information in the attributes or original name.
+       - Do NOT invent compliance (ASTM, ISO, USP, implant grade) or application claims (implantable, long-term contact) that are not clearly supported by the data.
+       - Do NOT claim specific device approvals (FDA, CE) under any circumstances.
+       - Do NOT rely on vague marketing terms; keep the tone technical and application-specific.
+       - Avoid copying the title wording verbatim; build on it with deeper technical and application context instead.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}

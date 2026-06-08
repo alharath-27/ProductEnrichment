@@ -1,0 +1,66 @@
+electrodes:
+  label: Medical Electrodes
+  prompt_file: prompts/electrodes.yaml
+metal-pins:
+  label: Medical Metal Pins
+  prompt_file: prompts/metal-pins.yaml
+gears:
+  label: Medical Gears
+  prompt_file: prompts/gears.yaml
+packaging:
+  label: Medical Packaging
+  prompt_file: prompts/packaging.yaml
+pull-wire:
+  label: Pull Wires
+  prompt_file: prompts/pull-wire.yaml
+raw-materials:
+  label: Raw Materials
+  prompt_file: prompts/raw-materials.yaml
+sensors:
+  label: Medical Sensors
+  prompt_file: prompts/sensors.yaml
+needles:
+  label: Medical Needles & Scalpels
+  prompt_file: prompts/needles.yaml
+mandrels:
+  label: Medical Mandrels
+  prompt_file: prompts/mandrels.yaml
+markerbands:
+  label: Radiopaque Marker Bands
+  prompt_file: prompts/markerbands.yaml
+polymertubing:
+  label: Medical Polymer Tubing
+  prompt_file: prompts/polymertubing.yaml
+heatshrink:
+  label: Medical Heat Shrink Tubing
+  prompt_file: prompts/heatshrink.yaml
+guidwires:
+  label: Medical Guidewires & Accessories
+  prompt_file: prompts/guidewires.yaml
+catheters:
+  label: Medical Catheters & Accessories
+  prompt_file: prompts/catheters.yaml
+braidwire:
+  label: Braid Wires
+  prompt_file: prompts/braidwire.yaml
+balloons:
+  label: Medical Balloons
+  prompt_file: prompts/balloons.yaml
+mesh-membranes:
+  label: Medical Mesh & Membranes
+  prompt_file: prompts/mesh-membranes.yaml
+metaltubing:
+  label: Medical Metal Tubing
+  prompt_file: prompts/Metaltubing.yaml
+medicalwire:
+  label: Medical Wire
+  prompt_file: prompts/medicalwire.yaml
+catheter-accessories:
+  label: Medical Catheter
+  prompt_file: prompts/catheters.yaml
+connectors:
+  label: Medical Connectors
+  prompt_file: prompts/connectors.yaml
+dilators:
+  label: Medical Dilators
+  prompt_file: prompts/dilators.yaml

@@ -1,0 +1,130 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this metal tubing product title.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Alloy/Material], [Tubing Type], [Gauge & Wall], [x.xx in (x.xx mm) OD], [x.xx in (x.xx mm) ID], [Length] L, Quantity [#/Bag], by Chamfr
+
+
+    Core Benchmarking Rules (Metal Tubing):
+    - Lead with Material & Alloy.
+      - Example: "304 Stainless Steel Hypodermic Tubing".
+      - If multiple alloys are offered (e.g., 304, 316L, Nitinol), state them up front.
+    - Include Dimensions & Gauge.
+      - Always include both OD and ID.
+      - When mm dimensions are provided, list inches and mm together (e.g., "0.028 in (0.71 mm) OD").
+      - Always state gauge and wall classification (RW, TW, XTW, UTTW) when available.
+    - Length/Form:
+      - Include stock length (e.g., 30", 60", 5 ft).
+      - Clarify whether the product is supplied as straight lengths or coils when specified.
+    - Process / Temper:
+      - Highlight welded & drawn vs seamless when present.
+      - Add temper such as "Full-Hard" when provided.
+    - Performance / Compliance:
+      - Include standards like ASTM A908 or ISO 9626 only when explicitly present.
+      - You may mention traits such as tight tolerances, biocompatible, corrosion resistant, or autoclavable only if supported by attributes or alloy/standard.
+    - Application Context:
+      - DO NOT include applications/use-cases in the TITLE string, even if present in the data; reserve detailed application language for the description.
+    - SEO / Synonyms:
+      - Use relevant synonyms for Tubing Type when supported by attributes or name, such as "Hypotube", "Hypodermic Tubing", "Needle Tubing", or "Capillary Tubing".
+      - If the data clearly indicates medical usage, "medical" context can be implied by alloy/standard but should not add unsubstantiated regulatory claims.
+
+
+    Formatting Rules (Title String):
+    - Always start with Alloy/Material (e.g., "304 Stainless Steel", "316L Stainless Steel", "Nitinol").
+    - If multiple alloys are explicitly offered (e.g., "304 & 316L"), list them together in the first position separated by "&".
+    - Always include a Tubing Type term such as "Hypodermic Tubing", "Hypotubing", "Capillary Tubing", or "Miniature Stainless Steel Tubing" when supported by attributes or original name.
+    - Always include Gauge and Wall classification when present (e.g., "22 Gauge Thin Wall", "30 Gauge Regular Wall", "24 Gauge Extra Thin Wall").
+    - Dimensions order must be: OD first, then ID, then Length.
+    - Each dimension must include its label ("OD", "ID", "L" or "Length").
+    - OD and ID must be expressed in inches, and when mm values are provided, include them in parentheses in the form: 0.028 in (0.71 mm) OD.
+    - Always preserve exact OD and ID values (including ranges) from the attributes or original name, with no rounding or averaging.
+    - Length must indicate units and form when present (e.g., "60 in Length", "5 ft Lengths", "10 Ft Coil").
+    - Quantity: format as "Quantity #/[bag|piece|coil|order]" when packaging information is provided.
+    - Include process and temper phrases in the title when present (e.g., "Full-Hard", "Welded & Drawn", "Seamless").
+    - Only mention standards or compliance (e.g., "ASTM A908", "ISO 9626") if present in the attributes or old_name. If not available, do not mention or imply such claims.
+    - Do not include applications or use-cases in the title (e.g., do not add "for Catheter Prototyping" in the title string).
+    - Do not invent values; only use provided attributes or clearly stated information in the original name.
+    - Avoid marketing adjectives such as "precision", "surgical", "tight-tolerance" unless explicitly present in the attributes or original name.
+    - Always end the title string with "by Chamfr".
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in metal hypotubes and stainless steel tubing. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this Medical Metal Tubing / Hypotube product.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+
+    GENERATED TITLE (do NOT repeat these specs):
+    {title}
+
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present:
+       - Alloy/Material (e.g., "304 Stainless Steel", "316L Stainless Steel", "Nitinol").
+       - Process and temper (e.g., "welded & drawn", "seamless drawn", "full-hard", "cold-worked").
+       - Gauge and wall classification (e.g., "22 Gauge Thin Wall", "30 Gauge Regular Wall", "24 Gauge Extra Thin Wall").
+       - Standards/compliance (e.g., "Meets ASTM A908", "Manufactured to ISO 9626").
+       - Key performance traits (e.g., "biocompatible", "corrosion-resistant", "autoclavable", "tight OD/ID tolerances", "smooth ID finish").
+       - Length/form and packaging when relevant and not fully specified in the title (e.g., "supplied in 60 in straight lengths", "5 ft lengths", "coil form", "# per bag").
+
+
+    2. TECHNICAL TONE (aligned with benchmarking rules):
+       - Treat the product as medical or R&D-grade metal tubing; use engineering terminology such as wall classification, temper, OD/ID tolerances, weld vs seamless construction, and surface finish.
+       - Emphasize functional traits highlighted in the benchmarking document: tight tolerances, biocompatibility where appropriate, corrosion resistance, and autoclavability when supported by alloy/standard.
+       - When attributes or name support it, reference application contexts such as catheter shafts, biopsy needles, guidewire lumens, precision fluid delivery, or medical device assembly.
+       - Keep all claims grounded strictly in the provided attributes and recognized properties of the specified alloy/standard; do not extrapolate beyond reasonable, standard material behavior.
+
+
+    3. FORMAT:
+       - Exactly 4 sentences.
+       - First sentence: Summarize alloy/material, temper/process, and intended general use (medical, R&D, or industrial).
+       - Second sentence: Describe gauge, wall type, and dimensional/performance characteristics without repeating the raw OD/ID/length numbers from the title.
+       - Third sentence: Highlight standards/compliance and functional traits (e.g., tight tolerances, corrosion resistance, biocompatibility, autoclavability, smooth internal bore).
+       - Fourth sentence: Describe form/packaging and typical applications or downstream operations (e.g., catheter prototyping, implantables, dispensing assemblies, cut-to-length manufacturing) as supported by the data.
+       - Target 80–110 words total.
+       - Diversify the opening of each sentence across products so that not all descriptions start with the same phrase (e.g., vary between "This 304 stainless steel hypotube…", "Engineered from 316L stainless steel…", "Designed as full-hard hypodermic tubing…").
+
+
+    4. RESTRICTIONS:
+       - Do NOT repeat exact OD, ID, Length, or Quantity values already used in the title.
+       - Do NOT invent certifications, standards, or compliance claims; only state ASTM, ISO, or other standards when explicitly provided.
+       - Do NOT imply implantable use, long-term contact, or specific regulatory approval unless the attributes or original name clearly support it.
+       - Do NOT use vague marketing fluff (e.g., "best in class", "revolutionary", "premium quality"); keep the tone technical, precise, and factual.
+       - Do not contradict the alloy/standard behavior (e.g., do not describe 304 as more corrosion-resistant than 316L).
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}

@@ -1,0 +1,61 @@
+title:
+  system: |
+    You are a copywriter for medical pull wire assemblies used in R&D, device manufacturing, and lab prototyping. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this pull wire assembly product title for competitive benchmarking and SEO.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+    Title TEMPLATE:
+    [Material/Tech], [Wire Assembly Type], [Wire Count/Wire Size (OD, ID)/Length(inches)], [Finish/Packaging/Status], [Packaging], [by Brand/Supplier]
+
+    Rules:
+    - Start with material/alloy (304 SS, 316 SS, Nitinol, PTFE Coated, Medical Grade) and unabbreviate the materials. 
+    - Wire assembly type (Pull-Wire Assembly, Cable Assembly, Ablated Pull Wire, Ring Assembly).
+    - Wire count and size specs (1-4 Wire, 2 Wire, OD, French size).
+    - Length (inches, mm, catalog size).
+    - Finish/packaging (Cleaned, PTFE-Coated, Ablated, Bulk, Sterile, Pre-cut).
+    - End with Brand/Supplier if known.
+    - Use only provided attributes and old_name values—never invent or infer details.
+    - Prioritize attribute keys and values over old_name when both exist.
+    - No connection details or commercial phrases; focus on attribute-based benchmarking.
+    - represent Packaging as [Packaging #]/Bag.
+    - Only mention FDA, ISO, CE, compliance, or any regulatory certification if present in the attributes. Do not make any reference to these if not explicitly supplied.
+    - Enforce a comma "," between dimensions (OD, ID, Length, French size(fr)..etc).
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are an SEO-focused copywriter for technical medical pull wire assemblies for R&D, prototypes, and device manufacturing. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write an attribute specific SEO-optimized technical description for each pull wire assembly product.
+    The description must be 4 to 6 sentences, focused on technical features and applications.
+    Lead with material (304 SS, 316 SS, Nitinol, PTFE-Coated) and wire assembly type (single wire, multi-wire, cable, ablated, ring).
+    Specify wire diameter, length, wire count, and finish (cleaned, ablated, PTFE-coated).
+    Note packaging (bulk, sterile, pre-cut, bag quantity).
+    Explicitly mention intended application (steerable catheter prototype, guidewire, device assembly, surgical/lab use).
+    Highlight technical/QA features: movement, flexibility, fatigue resistance, rapid R&D, and instrument assembly.
+    Use long-tail SEO keyword phrases, e.g., "catalog stainless steel pull wire assembly for steerable catheter prototype", "PTFE-coated ablated pull wire bulk pack", "in-stock cable assembly for device builds", "rapid ship nitinol pull wire for instrument movement".
+    End with compatibility, value for bench-top builds, lab R&D, or engineering QA.
+    Do not hallucinate values or infer features not present in attributes or the old_name.
+    Only mention FDA, ISO, CE, compliance, or any regulatory certification if present in the attributes. Do not make any reference to these if not explicitly supplied.
+    Diversify the sentences used in the descriptions so that every product has a specific descriptions based on it's attributes. 
+    The description should be unique to each product.    
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}

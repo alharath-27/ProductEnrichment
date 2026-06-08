@@ -1,0 +1,67 @@
+name: woocommerce-enrichment
+
+services:
+  api:
+    container_name: woocommerceproductenrichment-api-1
+    build: .
+    command: ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      QA_MODE: ${QA_MODE:-standard}
+    volumes:
+      - uploads_data:/app/backend/uploads
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    restart: unless-stopped
+
+  ui:
+    container_name: woocommerceproductenrichment-ui-1
+    build: .
+    command:
+      [
+        "streamlit",
+        "run",
+        "streamlit_app.py",
+        "--server.port=8501",
+        "--server.address=0.0.0.0",
+        "--server.enableCORS=false",
+        "--server.enableXsrfProtection=false",
+      ]
+    environment:
+      API_URL: http://api:8000
+      RUNNING_IN_DOCKER: "1"
+    volumes:
+      - uploads_data:/app/backend/uploads
+    expose:
+      - "8501"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: woocommerceproductenrichment-caddy-1
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN in .env before starting production}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - ui
+    restart: unless-stopped
+
+volumes:
+  uploads_data:
+  caddy_data:
+  caddy_config:

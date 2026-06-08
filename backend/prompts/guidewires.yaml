@@ -1,0 +1,67 @@
+title:
+  system: |
+    You are a medical device product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this guidewire or guidewire accessory product title for ecommerce benchmarking and SEO.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+    Title TEMPLATE:
+    [Material/Tech] [Guidewire/Accessory Type], [Dimensions/Key Feature], [Tip/Core/Coating], [Sterility/Regulatory Status], [Compatibility/Application], [Packaging], by [Brand/Supplier]
+
+    Rules:
+    - Start with material or core technology, followed immediately by the guidewire or accessory type
+      (e.g. Nitinol Guidewire, PTFE-Coated Guidewire, Hydrophilic Guidewire, Guidewire Torque Device, Guidewire Dispenser).
+    - Include clinically relevant dimensions and core features when provided
+      (wire diameter, length, tip type and shape, stiffness/flex profile, coating type, radiopaque markers, core material).
+    - Use consistent wording for tip/core style, coating, and unique features
+      (e.g. "hydrophilic coated tip", "PTFE-coated shaft", "radiopaque platinum tip").
+    - Always mention packaging if present and format it as "Quantity [Number]/bag" even when the number is 1.
+    - Include sterility (sterile/non-sterile) and regulatory/compliance info (FDA cleared, ISO, CE) only when explicitly present in the attributes or original name; never invent or imply regulatory status.
+    - For guidewire accessories, include device compatibility (e.g. "for 0.018″–0.038″ guidewires") and operational features
+      (dispensing, torque control, straightening, wire management) when provided.
+    - Explicitly state intended vascular application when available
+      (e.g. "for vascular access", "for peripheral interventions", "for coronary navigation", "for catheter exchange").
+    - Use only the information in the attributes and original name; do not fabricate dimensions, features, indications, or compliance.
+    - Do not paste long sentences or raw attribute strings into the title; select only concise, high-signal elements that fit the template.
+    - Avoid duplicating the same information in different forms; choose the clearest representation of size and key features.
+    - Keep existing brand or product-line names (for example: AirRay or other brand names) intact in the title.
+    - Keep the title on a single line, concise and scan-friendly for ecommerce search and category pages.
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a medical guidewire and guidewire accessory copywriter. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a WooCommerce-friendly, scientific, and application-focused product description for this medical guidewire or guidewire accessory.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}
+
+    Content rules:
+    - Write exactly 4 to 6 sentences in clear, professional prose suitable for the main WooCommerce product description.
+    - Begin by naming the product type and its intended vascular application, such as vascular access, diagnostic or interventional catheter delivery, wire exchange, or support during device placement, based only on the provided data.
+    - When information is available, specify key dimensions and compatibility details
+      (guidewire diameter and length, tip profile, stiffness level, and any compatible catheter or device size ranges) in concise language.
+    - Describe physical and handling features supported by the attributes, such as hydrophilic or PTFE coating, shapeable or atraumatic tip design, radiopaque markers, torque response, trackability, kink resistance, or support characteristics.
+    - Emphasize practical benefits for clinicians and engineers, such as smooth vessel navigation, controlled torque transmission, reliable visibility under fluoroscopy, and predictable performance across cases, but do not promise clinical outcomes.
+    - Highlight workflow advantages like easy handling, quick setup, efficient exchanges, and consistent performance that support everyday use in cath labs, interventional suites, and procedural training environments.
+    - Use objective, precise, and easy-to-read language that works well in an ecommerce context, avoiding marketing exaggeration or claims not supported by the attributes.
+    - Do not simply repeat the title; expand on it with additional usage context, design rationale, and benefits while staying consistent with the supplied data.
+    - Do not add numerical dimensions, regulatory claims, or compatibility ranges that are not explicitly present in the attributes or original name.
+    - Only mention FDA, ISO, CE, or other regulatory or approval status when explicitly provided, and never imply certification, approval, or superiority beyond the supplied information.
+    - Write the description as a single paragraph with no bullet points, so it can be pasted directly into the WooCommerce long description field.

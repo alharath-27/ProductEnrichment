@@ -1,0 +1,60 @@
+title:
+  system: |
+    You are a copywriter for medical raw materials (resins, colorants, additives, proto-sheets) for R&D and device manufacturing. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical raw material product title for benchmarking and SEO.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+    Title TEMPLATE:
+    [Material/Tech], [Form/Type], [Key Feature/Grade/Color], [Compliance Status], [Packaging], [by Brand/Supplier]
+
+    Rules:
+    - Start with material/resin type (Polypropylene, PEBA, TPU, PEEK, Thermoplastic Elastomer, Colorant/Pigment type).
+    - Specify form (Pellet, Liquid Concentrate, Sheet, Resin Additive, Proto-Sheet).
+    - Include grade/certification/color (Medical Grade, USP VI, Custom Color, Biocompatible, Non-Bleeding, Sterilization Ready).
+    - For Color: Use the exact color passed as an attibute. Example: 295C Blue -> 295C Blue.
+    - State compliance status (ISO 10993/13485, FDA, USP Class VI).
+    - Add [Quantity/bag] based on packaging or attributes field if present.
+    - Use only provided attributes and values from old_name as needed; never invent details.
+    - Do not invent quantity if not available in attributes or packaging.
+    - If multiple quantity values exist, use the most specific or smallest package size.
+    - Title should use phrases, not sentences.
+    - Only mention FDA, ISO, CE, compliance, or any regulatory certification if present in the attributes. Do not make any reference to these if not explicitly supplied.
+    - When chemicals or additives are invloved keep them in brackets in the title, example: Nylon Vestamid ML21 20% BaSO4 Resin -> Nylon Vestamid ML21 (20% BaSO4) Resin
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical SEO copywriter specializing in medical raw materials for device production, molding, extrusion, and R&D prototyping. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write an SEO-optimized technical description for this medical raw material (resin, colorant, sheet, additive).
+    The description must be 4 to 6 sentences.
+    Begin with material/tech, form/type, and grade/color details (polypropylene resin, medical grade, blue colorant, pellet, liquid concentrate, proto-sheet).
+    Explicitly note regulatory status: ISO 10993, ISO 13485, USP VI, FDA compliance, biocompatibility, non-bleeding/colorfastness, sterilization compatibility.
+    Specify packaging/quantity (bulk, sample pack, bag, stock) if available.
+    Highlight key features (sterilization ready, pigment blend, color masterbatch, high color fastness, rapid prototyping).
+    State main application(s): injection/extrusion molding, device coloring, catheter/tubing/housing, branding, lab sample, pilot and clinical-grade builds.
+    Use long-tail SEO keywords: “biocompatible resin for injection molding and device prototyping”, “sterilization-compatible colorant for catheter tubing”, “bulk medical-grade additive for pilot production”, “non-bleeding pigment for medical device branding”.
+    Do not invent quantity or details that aren't in attributes/old_name. Always be faithful to input data.
+    Only mention FDA, ISO, CE, compliance, or any regulatory certification if present in the attributes. Do not make any reference to these if not explicitly supplied.
+    Diversify the sentences used in the descriptions so that every product has a specific descriptions based on it's attributes. 
+    The description should be unique to each product.    
+    DO not mention QA (validtion or testing) in the description or any documentation related sentences. 
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}

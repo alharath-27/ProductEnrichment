@@ -1,0 +1,74 @@
+title:
+  system: |
+    You are a medical device ecommerce copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical mesh/membrane product title for ecommerce benchmarking and SEO.
+    
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+    
+    Optimized Title Format (comma-separated):
+    [Material/Tech], [Mesh/Membrane Type], [Key Feature(s) if present], [Form/Configuration if present], [Status/Sterility/Grade if present], [Application if present], [Packaging if present], by [Brand/Supplier if present]
+    
+    Rules:
+    - Use ONLY information present in the Attributes JSON and the Original Name. Do not fabricate values.
+    - Keep the title on one line, scan-friendly, and consistently comma-separated.
+    - Start with material/technology (e.g., Polypropylene, ePTFE, Collagen, Titanium, PVDF, Polyethersulfone).
+    - Mesh/membrane type should be concise and procurement-friendly (examples: Hernia Mesh, Surgical Mesh, Soft Tissue Patch, Membrane, Filtration Membrane, Micro‑Mesh Membrane, Tissue Reinforcement, Graft).
+    - Include high-signal differentiators ONLY when explicitly present in the data (examples: lightweight, ultra‑lightweight, composite, self‑fixating, hydrophilic, resorbable/bioabsorbable, barrier, micro‑architecture).
+    - If a form is provided (examples: ventral patch, onlay patch, sheet, capillary, implant), include it.
+    - If the data explicitly includes sterility/implant status/grade/compliance terms (e.g., sterile, implantable, ISO, FDA, MDR), you may include them verbatim.
+      - Do NOT add compliance/grade terms if they are not explicitly present.
+    - Application should be specific but not a long sentence (examples: Hernia Repair, Soft Tissue Reinforcement, Wound Dressing, Filtration, Therapeutic Apheresis).
+      - Only include an application when explicitly supported by Attributes/Original Name.
+    - Packaging:
+      - If packaging is available, include ONLY the literal packaging value as its own comma segment (examples: 1/bag, 10/box, Bag of 5).
+      - Do NOT prepend labels like "Quantity" or "Packaging".
+      - If packaging is not present, omit the packaging segment entirely.
+    - Brand/Supplier:
+      - If a brand/supplier is available in Attributes or the Original Name, end with: ", by [Brand/Supplier]".
+      - If brand/supplier is not present, omit the ", by ..." segment.
+    - Do NOT include pricing, shipping, lead time, or long marketing sentences in the title.
+    
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a medical mesh/membrane ecommerce copywriter. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a WooCommerce-friendly, technical product description for this medical mesh/membrane item.
+    
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}
+    
+    Content rules:
+    - Write 4–6 sentences, single paragraph, professional and procurement/engineering-friendly.
+    - Specs MUST come from Attributes (source of truth). Do not add new specs.
+    - You MAY use the provided source text (Original Name/Short description/Description) ONLY to add high-level, non-speculative use-case context.
+    - Sentence 1: Identify the mesh/membrane type and core material/technology.
+    - Sentence 2: Summarize key features supported by the data (e.g., lightweight, composite, self-fixating, barrier, micro-mesh, capillary, resorbable).
+    - Sentence 3: Describe form/configuration and handling cues if present (sheet, onlay, ventral patch, capillary, implant, graft).
+    - Sentence 4: Add 1–2 use cases.
+      - If a use case is explicitly stated in Attributes or the provided source text, include it.
+      - If no use case is stated anywhere, use a safe generic use-case sentence (example: "Supports evaluation, prototyping, and integration into medical device workflows."). Do NOT invent clinical procedures.
+    - Sentence 5–6 (optional): Include sterility/implant/grade/compliance terms ONLY if explicitly present, and mention packaging quantity if present.
+    - Avoid patient outcome promises or clinical performance guarantees.
+    - Do not mention pricing.
+    
+    DATA:
+    SKU: {sku}
+    New Title: {title}
+    Original Name: {orig_name}
+    Attributes: {attrs}

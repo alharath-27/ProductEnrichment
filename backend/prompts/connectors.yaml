@@ -1,0 +1,100 @@
+title:
+  system: |
+    You are a medtech product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this connectors and fittings product title.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Material], [Connector/Fitting Type], [Gender/Configuration], [Port Size(s)], [Color (if relevant)], [Quantity/Pack], by Chamfr
+
+
+    Rules:
+    - Always start with Material (e.g., Polypropylene, Nylon, 316 Stainless Steel, Polycarbonate).
+    - Always include a clear Connector/Fitting Type (e.g., Luer Lock Connector, Bulkhead Adapter, Y-Connector, Elbow, Stopcock, Barb Fitting).
+    - Include Gender/Configuration when relevant (e.g., Male Luer Lock to 1/8″ Barb, Male to Female, Female Luer to 1/4-28 Thread).
+    - Port sizes must be explicit and standardized, using inches for tube ID/OD and thread formats (e.g., 1/8″ Tube ID, 1/4-28 Thread).
+    - Preserve exact values and units (″, thread designations) with no rounding or unit conversion.
+    - If color is specified (e.g., Natural, Clear), include it after the functional phrase or port sizes.
+    - Always include quantity/packaging when available, using the format "Pack of #", "Quantity #/Bag", or similar.
+    - Do NOT mention applications or use-cases in the title.
+    - Do NOT mention compliance, certifications, or standards (e.g., USP Class VI, ISO 80369-7) in the title, even if present in attributes.
+    - Do not invent any material, size, or feature; only use what appears in the attributes or original name.
+    - Always end the title string with "by Chamfr".
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical medtech product copywriter specializing in medical connectors and fittings. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a TECHNICAL product description for this connectors and fittings product.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.85
+    }}
+
+
+    GENERATED TITLE (do NOT repeat these specs):
+    {title}
+
+
+    PRODUCT ATTRIBUTES:
+    {attrs}
+
+
+    CRITICAL REQUIREMENTS:
+    1. MUST explicitly mention these attributes if present:
+       - Material (e.g., "Molded from polypropylene...", "Machined from 316 stainless steel...")
+       - Connector/fitting type (e.g., luer lock, Y-connector, reducer, bulkhead adapter, elbow, barb fitting).
+       - Gender and orientation (e.g., male luer lock, female luer, barb-to-thread configuration).
+       - Port sizes and interface details not already captured in the title (e.g., specific barb profile, tube ID range, thread standard).
+       - Functional features (e.g., rotating luer hub, finger grips, low dead volume, leak-resistant geometry).
+       - Color and transparency when relevant (e.g., clear for visual fluid confirmation, natural).
+       - Sterility or reusability notes if present (e.g., non-sterile, single-use, reusable).
+
+
+    2. TECHNICAL TONE:
+       - Use engineering terminology around fluid pathway integrity, leak resistance, torque during connection, and tube interface security.
+       - Relate geometric and material features to performance (e.g., barbed ends for high pull-off resistance, rotating collars to reduce tubing twist).
+       - Reference appropriate connection contexts (tube-to-tube, tube-to-device, manifold interfaces, lab fluid transfer) at a technical level.
+       - Include specific attributes in the descriptions, not generic statements. 
+
+
+    3. FORMAT:
+       - Exactly 4 sentences.
+       - First sentence: Material, connector/fitting type, and primary configuration or interface role.
+       - Second sentence: Additional structural and dimensional attributes not already in the title (gender details, barb or thread style, color, geometric features).
+       - Third sentence: Performance-oriented characteristics (e.g., pull-off resistance, sealing performance, flow path characteristics, ease of connection/disconnection).
+       - Fourth sentence: R&D and manufacturing context, packaging, and how it fits into medical device development or lab setups (without clinical claims).
+       - Target 70–90 words total.
+       - Diversify the beginning sentences so that not all descriptions start the same way. 
+
+
+    4. RESTRICTIONS:
+       - Do NOT repeat exact port sizes or quantity wording already present in the title.
+       - Do NOT invent compliance, regulatory, or certification claims (USP, ISO, etc.), even if attributes suggest typical usage.
+       - Do NOT use marketing fluff; keep language technical and factual.
+       - Do NOT mention competitor brands or product lines.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}

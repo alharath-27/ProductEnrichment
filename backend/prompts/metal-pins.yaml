@@ -1,0 +1,63 @@
+title:
+  system: |
+    You are a copywriter for medical metal pin components used in R&D, prototyping, and device assembly. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical pin product title for competitive benchmarking and SEO.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+    Title TEMPLATE:
+    [Material/Tech], [Pin Type], [Diameter/Length/Feature], [Packing/Status], [Packaging]
+
+    Rules:
+    - Start with material/alloy (e.g., 304 SS, Titanium, Tungsten, 316 SS, 416 SS) and unabbreviate the material where possible.
+    - Pin type (Solid Pin, Dowel Pin, Micro Pin, Alignment Dowel Pin, Fixture Pin).
+    - Dimensions (OD, Length) in inches or mm (standardized units), you must ensure to seperate the dimension with commas ",".
+    - Packing/Status (Cleaned, Non-Sterile, Bulk, Cleanroom Pack, 200/bag).
+    - Use attribute keys and values for all details; fall back on old_name ONLY when absolutely missing from attributes.
+    - Do not invent or infer values not listed in attributes.
+    - Do not use regulatory/commercial phrases or institutional context.
+    - The title should avoid full sentences; use attribute-driven, benchmark-friendly phrases.
+    - represent Packaging as [Packaging] as Quantity/Bag.
+    - Only mention FDA, ISO, CE, compliance, or any regulatory certification if present in the attributes. Do not make any reference to these if not explicitly supplied.
+
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a technical copywriter for medical metal pins used in R&D, prototyping, fixture alignment, and device assembly. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write an SEO-optimized technical description for this medical metal pin component.
+    The description must be 4 to 6 sentences in a single paragraph.
+
+    Use only the data provided in attributes and the original name. Do not invent dimensions, tolerances, finishes, packaging, or use cases.
+    Start by naming the pin type and material/alloy (unabbreviate when possible), then include key dimensions (OD/diameter, length) and any notable features (chamfer, tip style, head, grooves, coating, finish) if present.
+    If tolerances, surface finish, hardness, heat treatment, or passivation/plating are present in attributes, incorporate them.
+    Include packaging/format when available (sterile/non-sterile, bulk, cleanroom pack, and Quantity/Bag).
+    Describe typical applications only when supported by the attributes or original name (e.g., fixture alignment, precision assembly, catheter/device component prototyping).
+    Provide Use cases for the product that fit a medical device R&D engineer. 
+    Avoid regulatory/compliance claims (FDA/ISO/CE) unless explicitly present in the attributes or original name.
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Title (already generated): {title}
+    Attributes: {attrs}

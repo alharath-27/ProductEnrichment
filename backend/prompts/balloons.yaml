@@ -1,0 +1,87 @@
+title:
+  system: |
+    You are a medical device product copywriter. Only output JSON with keys: sku, old_name, title.
+  user: |
+    Format this medical balloon product title for ecommerce benchmarking and SEO.
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "title": "..."
+    }}
+
+
+    Title TEMPLATE:
+    [Compliance Type], [Material], Medical Balloon, [Diameter mm (in)] x [Length mm (in)][, Shape if present], [Key Spec if present: RBP / Working Pressure / Expansion], Quantity [packaging attribute], by [Supplier]
+
+
+    Rules:
+    - Match this structure and comma placement, for example:
+      "Semi-Compliant, Pebax, Medical Balloon, 2.0 mm (0.08″) x 100.0 mm (3.94″), Cylindrical, Quantity 5/bag, by Poba Medical".
+    - Always start with Compliance Type, then Material, then the phrase "Medical Balloon", each separated by commas.
+    - Always include balloon size using a lower‑case "x" between diameter and length:
+      "[Diameter mm (in)] x [Length mm (in)]"
+      e.g. "2.0 mm (0.08″) x 100.0 mm (3.94″)".
+    - Format the size segment with commas around it as shown:
+      "... Medical Balloon, 2.0 mm (0.08″) x 100.0 mm (3.94″), ..."
+    - If a shape or configuration is provided (e.g. Cylindrical, Esophageal, Occlusion, Custom, Textured), include it after the size, separated by a comma.
+    - Add key spec differentiators when present, such as rated burst pressure (RBP), working pressure, or expansion range, as a short comma‑separated phrase.
+    - Do not include explicit use‑case phrases (e.g. "for PTA applications", "for esophageal dilation", "for occlusion procedures") in the title; reserve all use‑case language for the description.
+    - When packaging information is provided (e.g. "5/bag", "Pack of 10", "10 per box"), convert it into:
+      "Quantity [packaging attribute]" (for example, "Quantity 5/bag", "Quantity Pack of 10").
+    - If no packaging attribute is available, omit the "Quantity ..." segment entirely instead of guessing.
+    - End every title with ", by [Supplier]" using the supplier or brand name from the data.
+    - Use only information present in the attributes and original name; do not fabricate compliance type, material, size, specs, or packaging.
+    - Do not mention ISO, FDA, CE, or any regulatory or certification status in the title, even if such terms appear in the attributes.
+    - Do not paste long sentences or raw attribute strings into the title; select concise, high‑signal details that follow the template.
+    - Keep the final title on a single line, concise and scan‑friendly for ecommerce search and category pages.
+
+
+    DATA:
+    SKU: {sku}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+description:
+  system: |
+    You are a medical balloons copywriter. Only output JSON with keys: sku, old_name, description, certainty_score.
+  user: |
+    Write a WooCommerce-friendly, scientific, and application-focused product description for this medical balloon.
+
+    DATA:
+    SKU: {sku}
+    New Title: {title}
+    Original Name: {orig_name}
+    Attributes: {attrs}
+
+
+    Required output (JSON only):
+    {{
+      "sku": "{sku}",
+      "old_name": "{orig_name}",
+      "description": "...",
+      "certainty_score": 0.0
+    }}
+
+
+    Content rules:
+    - Write 4 to 6 sentences in clear, professional prose suitable for the main WooCommerce product description.
+    - Begin by naming the compliance type and material (e.g. compliant polyurethane balloon, semi‑compliant PET balloon, high pressure nylon balloon).
+    - Use the compliance type exactly as provided in the data (typically the "Balloons Type" attribute and/or the New Title). Do not change it (e.g., do not write "semi-compliant" if the data says compliant).
+    - Use the material exactly as provided in the data (e.g., do not mention PET unless the data states PET).
+      and describe the intended application based on the data (such as PTA catheter development, esophageal dilation, occlusion, or bench testing).
+    - When information is available, specify key dimensional and performance details in concise language
+      (balloon diameter and length in mm and inches when provided, wall thickness or expansion ratio, and rated burst or working pressure),
+      without inventing any missing values.
+    - Describe material and design properties supported by the attributes, such as flexibility, durability, trackability, recoil behavior, surface texture, and biocompatibility.
+    - Emphasize practical benefits for engineers and clinicians that relate to the attributes, such as controlled inflation, predictable expansion, support for catheter prototyping, or suitability for specific anatomical targets,
+      but do not promise clinical outcomes.
+    - Mention application contexts consistent with the data, for example PTA and angioplasty R&D, esophageal dilation, occlusion and access control, drug‑coated balloon development, or simulation and bench testing.
+    - Include packaging and supply details when provided (sterile or non‑sterile, quantity per bag or pack) in language that reads naturally in an ecommerce storefront.
+    - Use objective, precise, and easy‑to‑read language that works well online, avoiding exaggerated claims or features not present in the attributes or original name.
+    - Do not simply repeat the title; expand on it with additional usage context, performance framing, and material benefits while staying consistent with the supplied data.
+    - Do not add numerical dimensions or compliance statements that are not explicitly present in the attributes or original name.
+    - Do not mention ISO, FDA, CE, or any regulatory, certification, or approval terms anywhere in the description, even if they appear in the attributes; describe performance and materials only.
+    - Write the description as a single paragraph with no bullet points, so it can be pasted directly into the WooCommerce long description field.
