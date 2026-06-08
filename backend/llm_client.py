@@ -639,25 +639,34 @@ def call_title_llm(product, prompts, category: str = ""):
                 "issues": (["polymer_title_grounding_failed"] if polymer_issues else []) + issues_to_fix,
             }
 
-            if strict or issues_to_fix:
-                constraints = "Keep the same title template and do not invent values."
-                if issues_to_fix:
-                    constraints = (
-                        "Remove/replace unsupported spec tokens: "
-                        + ", ".join(issues_to_fix)
-                        + ". Use ONLY attribute literals for numbers; do not round or reformat decimals."
-                    )
-                review = _review_text_with_llm(
-                    sku=str(product.get("SKU", "") or ""),
-                    attrs=product.get("attributes") or {},
-                    kind="title",
-                    candidate_text=title,
-                    constraints_hint=constraints,
+            constraints = (
+                "Enforce title template consistency. The title must follow the selected category's "
+                "Title TEMPLATE exactly: same slot order, same separator style, same ending rules. "
+                "Do not vary title structure for style. Do not invent values."
+                "\n\nCATEGORY TITLE TEMPLATE AND RULES:\n"
+                + title_user_prompt.strip()
+            )
+            if issues_to_fix:
+                constraints = (
+                    constraints
+                    + "\n\nRemove/replace unsupported spec tokens: "
+                    + ", ".join(issues_to_fix)
+                    + ". Use ONLY attribute literals for numbers; do not round or reformat decimals."
                 )
-                fixed_title = normalize_copy_style(
-                    normalize_dimension_label_order(normalize_wp_units(review.get("fixed_text", title))),
-                    kind="title",
-                )
+
+            # Titles must be consistent across a category, so always run this review.
+            # Description review remains conditional so descriptions can vary and batches stay cheaper.
+            review = _review_text_with_llm(
+                sku=str(product.get("SKU", "") or ""),
+                attrs=product.get("attributes") or {},
+                kind="title",
+                candidate_text=title,
+                constraints_hint=constraints,
+            )
+            fixed_title = normalize_copy_style(
+                normalize_dimension_label_order(normalize_wp_units(review.get("fixed_text", title))),
+                kind="title",
+            )
 
             hard_final = _hard_validate_against_attrs(product.get("attributes") or {}, fixed_title)
             polymer_final: List[str] = []
