@@ -14,15 +14,30 @@ Upload a WooCommerce product export, choose a product category, run enrichment, 
 
 It does not manage inventory, edit attributes, or create categories.
 
-## Local Setup
+## Ways To Run It
+
+There are two supported ways to run this app.
+
+| Use case | Command | URL |
+|---|---|---|
+| Local laptop test | `./start.sh` or `docker compose up -d --build` | `http://localhost:8501` |
+| Linux server by IP | `docker compose up -d --build` | `http://SERVER_IP:8501` |
+| Linux server with domain | `docker compose -f docker-compose.prod.yml up -d --build` | `https://APP_DOMAIN` |
+
+Use the normal `docker-compose.yml` file for local testing or IP-based server testing.
+
+Use `docker-compose.prod.yml` only when a real domain points to the server. That version runs Caddy for HTTPS.
+
+## Local Laptop Setup
+
+Use this if you are running the app on your own machine.
 
 Requirements:
 
 - Docker Desktop
 - DeepSeek API key
-- WooCommerce CSV export
 
-Run:
+Run from this folder:
 
 ```bash
 cp .env.example .env
@@ -42,6 +57,50 @@ Stop:
 ```bash
 docker compose down
 ```
+
+## Server Setup
+
+Use this for the boss-friendly link.
+
+Requirements on the server:
+
+- Linux server
+- Docker Engine
+- Docker Compose
+- DeepSeek API key
+- WooCommerce CSV export for testing
+
+Clone the repo, create `.env`, then start the app.
+
+For a quick IP test:
+
+```bash
+cp .env.example .env
+# edit .env and add DEEPSEEK_API_KEY
+docker compose up -d --build
+```
+
+Open:
+
+```text
+http://SERVER_IP:8501
+```
+
+For a real domain with HTTPS:
+
+```bash
+cp .env.example .env
+# edit .env and set APP_DOMAIN plus DEEPSEEK_API_KEY
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Open:
+
+```text
+https://APP_DOMAIN
+```
+
+Full server instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## How To Use
 
@@ -97,7 +156,7 @@ Options:
 
 ## Deployment
 
-For a simple link your boss can open, deploy this repo to a Linux server with Docker.
+For a simple link your boss can open, deploy this repo to a Linux server with Docker Engine and Docker Compose.
 
 Server deployment guide:
 
@@ -107,13 +166,13 @@ Workflow explanation:
 
 [ENRICHMENT_WORKFLOW.md](ENRICHMENT_WORKFLOW.md)
 
-Production command:
+Use this when you have a domain:
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-Local/IP test command:
+Use this when testing by server IP:
 
 ```bash
 docker compose up -d --build
