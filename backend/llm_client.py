@@ -558,7 +558,7 @@ def _clean_title_part(value: str) -> str:
 
 def _join_title_parts(parts: List[str]) -> str:
     cleaned = [_clean_title_part(p) for p in parts if _clean_title_part(p)]
-    return " – ".join(cleaned)
+    return ", ".join(cleaned)
 
 
 def _deterministic_needles_title(product: Dict[str, Any]) -> str:
